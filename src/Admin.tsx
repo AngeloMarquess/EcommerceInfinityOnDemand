@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Users, Mail, Phone, Calendar, ArrowLeft, Trash2 } from 'lucide-react';
+import { Users, Mail, Phone, Calendar, ArrowLeft, Trash2, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from './lib/supabase';
 
 interface Lead {
   id: string;
@@ -12,23 +13,54 @@ interface Lead {
 
 function Admin() {
   const [leads, setLeads] = useState<Lead[]>([]);
+  
+  // Login States
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     loadLeads();
   }, []);
 
-  const loadLeads = () => {
-    const data = localStorage.getItem('infinity_leads');
-    if (data) {
-      setLeads(JSON.parse(data).reverse()); // Apresenta o mais recente por cima
+  const loadLeads = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .order('data_cadastro', { ascending: false });
+        
+      if (error) {
+        console.error("Erro do Supabase:", error);
+        return;
+      }
+      
+      setLeads(data || []);
+    } catch (err) {
+      console.error("Exceção ao carregar leads:", err);
     }
   };
 
-  const deleteLead = (id: string) => {
+  const deleteLead = async (id: string) => {
     if (window.confirm("Você tem certeza que deseja deletar este lead de seu banco de dados?")) {
-      const filtered = leads.filter(l => l.id !== id);
-      localStorage.setItem('infinity_leads', JSON.stringify(filtered));
-      setLeads(filtered);
+      try {
+        const { error } = await supabase
+          .from('leads')
+          .delete()
+          .eq('id', id);
+
+        if (error) {
+          console.error("Erro ao deletar lead do Supabase:", error);
+          alert("Houve um erro ao deletar. Atualize a página e tente novamente.");
+          return;
+        }
+
+        const filtered = leads.filter(l => l.id !== id);
+        setLeads(filtered);
+      } catch (err) {
+        console.error("Exceção ao deletar lead:", err);
+      }
     }
   };
 
@@ -38,6 +70,65 @@ function Admin() {
       hour: '2-digit', minute: '2-digit'
     });
   };
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (username === 'admin' && password === 'Green@2026') {
+      setIsAuthenticated(true);
+      setError(false);
+    } else {
+      setError(true);
+      setPassword('');
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="admin-wrapper" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-dark)' }}>
+        <div className="bg-glow-1"></div>
+        <div className="cta-box glass" style={{ maxWidth: '450px', width: '100%', padding: '40px', position: 'relative', zIndex: 10 }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+            <div className="service-icon" style={{ backgroundColor: 'rgba(0, 255, 135, 0.1)', color: 'var(--primary)', marginBottom: 0, width: '80px', height: '80px', borderRadius: '50%' }}>
+              <Lock size={40} />
+            </div>
+          </div>
+          <h2 style={{ fontSize: '2rem', marginBottom: '8px' }}>Acesso Restrito</h2>
+          <p className="text-muted" style={{ marginBottom: '32px' }}>Painel Administrativo - Infinity</p>
+          
+          <form className="cta-form" onSubmit={handleLogin}>
+            <div className="form-group" style={{ marginBottom: '16px' }}>
+              <input
+                type="text"
+                placeholder="Usuário"
+                required
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+              />
+            </div>
+            <div className="form-group" style={{ marginBottom: '16px' }}>
+              <input
+                type="password"
+                placeholder="Senha"
+                required
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+              />
+            </div>
+            {error && <p className="text-success" style={{ color: '#f2295f', fontSize: '0.875rem', marginBottom: '16px', fontWeight: 600 }}>Usuário ou senha incorretos.</p>}
+            <button type="submit" className="btn btn-primary btn-lg cta-btn" style={{ width: '100%' }}>
+              Entrar
+            </button>
+          </form>
+          
+          <div style={{ marginTop: '32px' }}>
+            <Link to="/" className="text-muted" style={{ fontSize: '0.875rem', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <ArrowLeft size={14} /> Voltar ao site
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-wrapper" style={{ minHeight: '100vh', padding: '40px 24px', backgroundColor: 'var(--bg-dark)' }}>

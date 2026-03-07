@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowRight, BarChart3, Rocket, Target, ShoppingCart, Smartphone, Globe, Mail, ChevronRight, Zap, Monitor, PieChart, Users, ShieldCheck, Shield, Cloud } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
+import { supabase } from './lib/supabase';
 function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
 
@@ -9,6 +9,7 @@ function LandingPage() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,25 +34,30 @@ function LandingPage() {
     setWhatsapp(value);
   };
 
-  const handleLeadCapture = (e: React.FormEvent) => {
+  const handleLeadCapture = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
-    // Save to localStorage simulation
-    const newLead = {
-      id: Date.now().toString(),
-      nome,
-      email,
-      whatsapp,
-      data_cadastro: new Date().toISOString()
-    };
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .insert([
+          { nome, email, whatsapp }
+        ]);
 
-    const leadsAntigosStr = localStorage.getItem('infinity_leads');
-    const leads = leadsAntigosStr ? JSON.parse(leadsAntigosStr) : [];
-    leads.push(newLead);
-    localStorage.setItem('infinity_leads', JSON.stringify(leads));
+      if (error) {
+        console.error("Error inserting lead:", error);
+        alert("Houve um erro ao enviar suas informações. Tente novamente.");
+        setIsSubmitting(false);
+        return;
+      }
 
-    // Redirect to Scheduling
-    window.location.href = 'https://calendly.com/angelobritoo/consultoria-trafego-pago';
+      // Redirect to Scheduling
+      window.location.href = 'https://calendly.com/angelobritoo/consultoria-trafego-pago';
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -286,8 +292,8 @@ function LandingPage() {
                   onChange={handleWhatsappChange}
                 />
               </div>
-              <button type="submit" className="btn btn-primary btn-lg cta-btn">
-                Agendar Consultoria Gratuita
+              <button type="submit" className="btn btn-primary btn-lg cta-btn" disabled={isSubmitting}>
+                {isSubmitting ? 'Agendando...' : 'Agendar Consultoria Gratuita'}
               </button>
             </form>
           </div>
