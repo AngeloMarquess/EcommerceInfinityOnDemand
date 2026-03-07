@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Users, Mail, Phone, Calendar, ArrowLeft, Trash2, Lock } from 'lucide-react';
+import { Users, Mail, Phone, Calendar, ArrowLeft, Trash2, Lock, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from './lib/supabase';
 
@@ -24,7 +24,10 @@ function Admin() {
     loadLeads();
   }, []);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const loadLeads = async () => {
+    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from('leads')
@@ -33,12 +36,15 @@ function Admin() {
         
       if (error) {
         console.error("Erro do Supabase:", error);
+        setIsLoading(false);
         return;
       }
       
       setLeads(data || []);
     } catch (err) {
       console.error("Exceção ao carregar leads:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -136,9 +142,20 @@ function Admin() {
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
           <div>
-            <Link to="/" className="btn btn-outline sm-btn" style={{ marginBottom: '16px', display: 'inline-flex' }}>
-              <ArrowLeft size={16} /> Voltar para o Site
-            </Link>
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+              <Link to="/" className="btn btn-outline sm-btn" style={{ display: 'inline-flex' }}>
+                <ArrowLeft size={16} /> Voltar para o Site
+              </Link>
+              <button 
+                onClick={loadLeads} 
+                className="btn btn-primary sm-btn" 
+                style={{ display: 'inline-flex', gap: '8px', padding: '0 16px' }}
+                disabled={isLoading}
+              >
+                <RefreshCw size={16} className={isLoading ? "spin-anim" : ""} /> 
+                {isLoading ? 'Atualizando...' : 'Atualizar Dados'}
+              </button>
+            </div>
             <h1 className="hero-title" style={{ fontSize: '2.5rem', marginBottom: '8px' }}>
               Painel de <span className="text-gradient">Leads Capturados</span>
             </h1>

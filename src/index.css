@@ -956,3 +956,13 @@ h6 {
     padding: 24px;
   }
 }
+
+.spin-anim {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
