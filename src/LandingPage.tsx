@@ -360,7 +360,8 @@ function LandingPage() {
         </div>
         <div className="container">
           <div className="footer-bottom">
-            <p>&copy; {new Date().getFullYear()} Infinity on Demand. Todos os direitos reservados. | CNPJ: 53.316.174/0001-24</p>
+            <p>&copy; {new Date().getFullYear()} INFINITY ON DEMAND LTDA. Todos os direitos reservados. | CNPJ: 65.929.586/0001-19</p>
+            <p style={{ fontSize: '12px', marginTop: '4px', opacity: 0.7 }}>Rua Capitão José da Luz, 137, Sala 0203, Edifício Cervantes - Coelhos, Recife - PE - CEP 50070-540</p>
           </div>
         </div>
       </footer>

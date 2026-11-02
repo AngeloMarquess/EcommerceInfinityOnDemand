@@ -28,7 +28,7 @@ function PrivacyPolicy() {
           <br />
 
           <p>
-            A <strong>Infinity on Demand</strong> (CNPJ: 53.316.174/0001-24), agência focada em marketing digital de alta performance, respeita a sua privacidade. Esta Política de Privacidade explica como coletamos, usamos e protegemos os seus dados pessoais ao visitar nosso site e interagir com nossos serviços.
+            A <strong>Infinity on Demand</strong> (CNPJ: 65.929.586/0001-19), agência focada em marketing digital de alta performance, respeita a sua privacidade. Esta Política de Privacidade explica como coletamos, usamos e protegemos os seus dados pessoais ao visitar nosso site e interagir com nossos serviços.
           </p>
 
           <h3 style={{ color: 'var(--text-main)', marginTop: '40px', marginBottom: '16px', fontSize: '1.5rem' }}>1. Coleta de Informações Pessoais</h3>
@@ -64,7 +64,7 @@ function PrivacyPolicy() {
           <h3 style={{ color: 'var(--text-main)', marginTop: '40px', marginBottom: '16px', fontSize: '1.5rem' }}>7. Contato</h3>
           <p>Para dúvidas a respeito desta Política de Privacidade ou para acionar os seus direitos sobre dados pessoais, entre em contato através de:</p>
           <p><strong>E-mail: </strong>contato@infinityondemand.com.br</p>
-          <p><strong>CNPJ: </strong>53.316.174/0001-24</p>
+          <p><strong>CNPJ: </strong>65.929.586/0001-19</p>
           <br />
           <p>Ao utilizar o site da <strong>Infinity on Demand</strong>, você concorda com os termos dispostos nesta Política de Privacidade.</p>
         </div>
@@ -73,7 +73,7 @@ function PrivacyPolicy() {
       <footer className="footer">
         <div className="container">
           <div className="footer-bottom" style={{ borderTop: 'none', paddingTop: 0 }}>
-            <p>&copy; {new Date().getFullYear()} Infinity on Demand. Todos os direitos reservados. | CNPJ: 53.316.174/0001-24</p>
+            <p>&copy; {new Date().getFullYear()} Infinity on Demand. Todos os direitos reservados. | CNPJ: 65.929.586/0001-19</p>
           </div>
         </div>
       </footer>
